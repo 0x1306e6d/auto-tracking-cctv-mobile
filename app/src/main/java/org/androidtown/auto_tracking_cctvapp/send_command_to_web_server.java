@@ -12,6 +12,8 @@ import org.androidtown.auto_tracking_cctvapp.retrofit.direction_message;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -68,27 +70,28 @@ public class send_command_to_web_server extends Activity {
 
     public void send_command(String direction) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:3000/")
+                .baseUrl("http://192.168.1.3:13000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         RetrofitService service = retrofit.create(RetrofitService.class);
 
         Call<List<direction_message>> call = service.get_direction_message(direction);
-        /*
-        call.enqueue(new Callback<org.androidtown.auto_tracking_cctvapp.retrofit.direction_message>() {
+        call.enqueue(new Callback<List<direction_message>>() {
             @Override
-            public void onResponse(Call<direction_message> call, Response<direction_message> response) {
-                if(response.isSuccessful()) {
-                    DirectionMessage = response.body();
-                }
+            public void onResponse(Call<List<direction_message>> call, Response<List<direction_message>> response) {
+
             }
 
             @Override
-            public void onFailure(Call<direction_message> call, Throwable t) {
-                Log.e("Error", t.getMessage());
+            public void onFailure(Call<List<direction_message>> call, Throwable t) {
+
             }
         });
-        */
+
+//        Log.d("SEND", "send_command() returned: " + call.request());
+//        Log.d("EXCUTED", "send_command() returned: " + call.isExecuted());
+//        Log.d("CANCELED", "send_command() returned: " + call.isCanceled());
+
         Log.i("Sended Message", direction);
     }
 }
