@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 
 import org.androidtown.auto_tracking_cctvapp.retrofit.RetrofitService;
 import org.androidtown.auto_tracking_cctvapp.retrofit.direction_message;
-import org.androidtown.auto_tracking_cctvapp.server_connect.server_ip_port;
+import org.androidtown.auto_tracking_cctvapp.server_connect.server_ip_port_camera;
 
 import java.util.List;
 
@@ -26,8 +26,9 @@ public class send_command_to_web_server extends Activity {
 
     ImageButton up_btn, left_btn, right_btn, down_btn;
 
-    server_ip_port server_ip_port; //server info object(ip address, port num)
+    server_ip_port_camera server_ip_port_camera; //server info object(ip address, port num)
     String ip_address, port_num;
+    Integer camera_num; //selected camera number
 
     direction_message DirectionMessage; //retrofit
 
@@ -38,9 +39,10 @@ public class send_command_to_web_server extends Activity {
 
         //get server ip_address, port num
         Intent intent = getIntent();
-        server_ip_port = (server_ip_port)intent.getSerializableExtra("server_ip_port");
-        ip_address = server_ip_port.get_ip_address();
-        port_num = server_ip_port.get_port_num();
+        server_ip_port_camera = (server_ip_port_camera)intent.getSerializableExtra("server_ip_port_camera");
+        ip_address = server_ip_port_camera.get_ip_address();
+        port_num = server_ip_port_camera.get_port_num();
+        camera_num = server_ip_port_camera.get_camera_num();
 
         //ImageButton Setting
         up_btn = (ImageButton) findViewById(R.id.up_button);

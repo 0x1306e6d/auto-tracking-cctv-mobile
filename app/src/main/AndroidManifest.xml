@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".camera_select"></activity>
         <activity android:name=".send_command_to_web_server"></activity>
     </application>
 
