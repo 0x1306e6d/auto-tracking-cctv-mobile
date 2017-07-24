@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
+import org.androidtown.auto_tracking_cctvapp.retrofit.Direction;
 import org.androidtown.auto_tracking_cctvapp.retrofit.RetrofitService;
 import org.androidtown.auto_tracking_cctvapp.retrofit.direction_message;
 import org.androidtown.auto_tracking_cctvapp.server_connect.server_ip_port_camera;
@@ -30,7 +31,7 @@ public class send_command_to_web_server extends Activity {
     String ip_address, port_num;
     Integer camera_num; //selected camera number
 
-    direction_message DirectionMessage; //retrofit
+    direction_message directionmessageMessage; //retrofit
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,9 @@ public class send_command_to_web_server extends Activity {
                 .build();
         RetrofitService service = retrofit.create(RetrofitService.class);
 
-        Call<List<direction_message>> call = service.get_direction_message(direction);
+        Direction dir = new Direction(direction);
+        Call<List<direction_message>> call = service.get_direction_message(dir);
+
         call.enqueue(new Callback<List<direction_message>>() {
             @Override
             public void onResponse(Call<List<direction_message>> call, Response<List<direction_message>> response) {
