@@ -42,7 +42,7 @@ public class camera_select extends AppCompatActivity {
 
                 Intent intent = new Intent(
                         getApplicationContext(),
-                        send_command_to_web_server.class);
+                        selected_camera_play.class);
                 intent.putExtra("server_ip_port_camera", server_ip_port_camera);
                 startActivity(intent);
 
