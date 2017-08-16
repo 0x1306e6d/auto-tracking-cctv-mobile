@@ -5,6 +5,6 @@ package org.androidtown.auto_tracking_cctvapp.retrofit;
  */
 public class direction_message {
 
-    private String message;
+    private String direction_message;
 
 }
