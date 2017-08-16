@@ -17,7 +17,7 @@
         </activity>
 
         <activity android:name=".camera_select"></activity>
-        <activity android:name=".send_command_to_web_server"></activity>
+        <activity android:name=".selected_camera_play"></activity>
     </application>
 
     <!-- for internet communication -->
