@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import org.androidtown.auto_tracking_cctvapp.server_connect.server_ip_port_camera;
 
 public class MainActivity_login extends AppCompatActivity {
@@ -18,6 +20,11 @@ public class MainActivity_login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_server_connect);
+
+        //fcm
+        //FirebaseMessaging.getInstance().subscribeToTopic("news");
+        //FirebaseMessaging.getInstance().
+        FirebaseInstanceId.getInstance().getToken();
 
         //Setting
         ip_address_edit_text = (EditText)findViewById(R.id.server_ip_address);

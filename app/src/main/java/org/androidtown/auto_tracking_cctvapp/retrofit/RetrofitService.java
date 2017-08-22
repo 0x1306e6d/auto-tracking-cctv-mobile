@@ -14,11 +14,14 @@ import retrofit2.http.POST;
 
 public interface RetrofitService {
     @POST("move")
-    Call<List<direction_message>> get_direction_message(
-            @Body Direction direction
-    );
+    Call<List<direction_message>> get_direction_message(@Body Direction direction);
 
-    
+    @POST("mode")
+    Call<List<mode_message>> get_mode_message(@Body Mode mode);
+
+
+//    @POST("token")
+//    Call<List<token_message>> get_token_message(@Body Mode mode);
     /*
     @GET("move/{direction}")
     Call<List<direction_message>> get_direction_message(

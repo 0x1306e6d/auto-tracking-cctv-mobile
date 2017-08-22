@@ -18,7 +18,8 @@
             android:id="@+id/server_ip_address"
             android:inputType="number"
             android:digits="1234567890."
-            android:hint="164.125.68.74"/>
+            android:hint="164.125.68.74"
+            android:text="164.125.68.74"/>
     </TableRow>
     <TableRow>
         <TextView
@@ -26,7 +27,8 @@
         <EditText
             android:id="@+id/server_port_num"
             android:inputType="number"
-            android:hint="13000"/>
+            android:hint="13000"
+            android:text="13000"/>
     </TableRow>
     <TableRow>
         <Button
