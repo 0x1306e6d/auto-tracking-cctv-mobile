@@ -27,9 +27,9 @@ public class MainActivity_login extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getToken();
 
         //Setting
-        ip_address_edit_text = (EditText)findViewById(R.id.server_ip_address);
-        port_num_edit_text = (EditText)findViewById(R.id.server_port_num);
-        connect_btn = (Button)findViewById(R.id.server_connect_btn);
+        ip_address_edit_text = (EditText) findViewById(R.id.server_ip_address);
+        port_num_edit_text = (EditText) findViewById(R.id.server_port_num);
+        connect_btn = (Button) findViewById(R.id.server_connect_btn);
 
         //Button Event
         connect_btn.setOnClickListener(new View.OnClickListener() {

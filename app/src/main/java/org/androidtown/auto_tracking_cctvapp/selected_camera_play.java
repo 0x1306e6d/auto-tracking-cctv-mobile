@@ -77,16 +77,16 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
         //get server ip_address, port num
         Intent intent = getIntent();
-        server_ip_port_camera = (server_ip_port_camera)intent.getSerializableExtra("server_ip_port_camera");
+        server_ip_port_camera = (server_ip_port_camera) intent.getSerializableExtra("server_ip_port_camera");
         ip_address = server_ip_port_camera.get_ip_address();
         http_port_num = Integer.parseInt(server_ip_port_camera.get_port_num());
-        socket_port_num = http_port_num ;
+        socket_port_num = http_port_num;
         camera_num = server_ip_port_camera.get_camera_num();
 
-        Log.d("camera_num",camera_num.toString());
+        Log.d("camera_num", camera_num.toString());
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + ip_address + ":" + http_port_num +"/")
+                .baseUrl("http://" + ip_address + ":" + http_port_num + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         service = retrofit.create(RetrofitService.class);
@@ -219,6 +219,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
             public void onResponse(Call<List<direction_message>> call, Response<List<direction_message>> response) {
 
             }
+
             @Override
             public void onFailure(Call<List<direction_message>> call, Throwable t) {
 
@@ -241,6 +242,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
             public void onResponse(Call<List<mode_message>> call, Response<List<mode_message>> response) {
 
             }
+
             @Override
             public void onFailure(Call<List<mode_message>> call, Throwable t) {
 
@@ -256,7 +258,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
                 client_socket.connect(new InetSocketAddress(ip_address, socket_port_num)); //ip_address, socket_port_num
                 Log.d(TAG, "네트워크 연결 성공");
 
-               // mInput = new DataInputStream(client_socket.getInputStream());
+                // mInput = new DataInputStream(client_socket.getInputStream());
 
             } catch (IOException e) {
                 Log.e(TAG, "네트워크 연결 실패: ", e);

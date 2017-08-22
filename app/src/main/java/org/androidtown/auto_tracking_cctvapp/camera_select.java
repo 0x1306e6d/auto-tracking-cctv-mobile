@@ -27,11 +27,11 @@ public class camera_select extends AppCompatActivity {
         setContentView(R.layout.camera_select);
 
         camera_list_adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, camera_list);
-        listview = (ListView)findViewById(R.id.camera_list_view);
+        listview = (ListView) findViewById(R.id.camera_list_view);
         listview.setAdapter(camera_list_adapter);
 
         Intent intent = getIntent();
-        server_ip_port_camera = (server_ip_port_camera)intent.getSerializableExtra("server_ip_port_camera");
+        server_ip_port_camera = (server_ip_port_camera) intent.getSerializableExtra("server_ip_port_camera");
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

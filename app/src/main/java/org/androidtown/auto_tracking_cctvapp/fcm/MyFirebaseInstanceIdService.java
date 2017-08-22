@@ -15,7 +15,7 @@ import okhttp3.RequestBody;
 /**
  * Created by soeun on 2017-08-17.
  */
-public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService{
+public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     private final static String TAG = "MyFirebaseIIdService";
 
     @Override
@@ -30,7 +30,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService{
     private void sendRegistrationToServer(String token) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("Token",token)
+                .add("Token", token)
                 .build();
 
         //request

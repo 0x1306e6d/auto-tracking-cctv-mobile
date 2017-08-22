@@ -9,7 +9,8 @@ public class server_ip_port_camera implements Serializable {
     private String ip_address, port_num;
     private Integer camera_num;
 
-    public server_ip_port_camera() {}
+    public server_ip_port_camera() {
+    }
 
     public String get_ip_address() {
         return ip_address;
