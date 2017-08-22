@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:weightSum="1">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <SurfaceView
+            android:id="@+id/SurfaceView"
             android:layout_width="match_parent"
-            android:layout_height="275dp"
-            android:id="@+id/SurfaceView" />
+            android:layout_height="275dp" />
         <!--android:scaleType="fitXY"-->
     </LinearLayout>
 
     <Switch
+        android:id="@+id/mode_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Auto Tracking "
+        android:layout_gravity="center_horizontal"
         android:checked="true"
-        android:textOn="On"
+        android:text="Auto Tracking "
         android:textOff="Off"
-        android:id="@+id/mode_switch"
-        android:layout_gravity="center_horizontal" />
+        android:textOn="On" />
 
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:gravity="center">
 
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <ImageButton
+                android:id="@+id/up_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/up_button"
                 android:layout_column="1"
                 android:padding="0dp"
                 android:src="@drawable/up" />
@@ -51,17 +51,17 @@
             android:layout_height="wrap_content">
 
             <ImageButton
+                android:id="@+id/left_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/left_button"
                 android:layout_column="0"
                 android:padding="0dp"
                 android:src="@drawable/left" />
 
             <ImageButton
+                android:id="@+id/right_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/right_button"
                 android:layout_column="2"
                 android:padding="0dp"
                 android:src="@drawable/right" />
@@ -72,9 +72,9 @@
             android:layout_height="wrap_content">
 
             <ImageButton
+                android:id="@+id/down_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/down_button"
                 android:layout_column="1"
                 android:padding="0dp"
                 android:src="@drawable/down" />
