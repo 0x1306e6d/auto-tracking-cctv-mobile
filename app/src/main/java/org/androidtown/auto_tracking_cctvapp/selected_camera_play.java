@@ -24,8 +24,11 @@ import org.androidtown.auto_tracking_cctvapp.server_connect.server_ip_port_camer
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.List;
 
 import retrofit2.Call;
@@ -47,6 +50,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     private Socket client_socket;
     private BufferedReader in;
+    private OutputStreamWriter out;
     //private DataInputStream mInput;
     private NetworkThread mNetworkThread;
 
@@ -59,7 +63,6 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
     server_ip_port_camera server_ip_port_camera; //server info object(ip address, port num)
     String ip_address;
     Integer http_port_num, socket_port_num, camera_num; //selected camera number
-
 
     Retrofit retrofit;
     RetrofitService service;
@@ -77,8 +80,10 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         server_ip_port_camera = (server_ip_port_camera)intent.getSerializableExtra("server_ip_port_camera");
         ip_address = server_ip_port_camera.get_ip_address();
         http_port_num = Integer.parseInt(server_ip_port_camera.get_port_num());
-        socket_port_num = http_port_num + 1;
+        socket_port_num = http_port_num ;
         camera_num = server_ip_port_camera.get_camera_num();
+
+        Log.d("camera_num",camera_num.toString());
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("http://" + ip_address + ":" + http_port_num +"/")
@@ -110,7 +115,14 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
             public void run() {
                 try {
                     client_socket = new Socket(ip_address, socket_port_num);
+
                     in = new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
+
+                    ByteBuffer buffer = ByteBuffer.allocate(4);
+                    buffer.order(ByteOrder.BIG_ENDIAN);
+                    buffer.putInt(camera_num);
+                    client_socket.getOutputStream().write(buffer.array());
+                    client_socket.getOutputStream().flush();
 
                     str_recv = in.readLine();  //(\n앞에까지 읽어서 return)
                     Log.d("CMA", "sended string: " + str_recv.length());
@@ -198,7 +210,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     //retrofit http (direction)
     public void send_direction_command(String direction) {
-        Direction dir = new Direction(direction);
+        Direction dir = new Direction(camera_num, direction);
 
         Call<List<direction_message>> call = service.get_direction_message(dir);
 
@@ -220,7 +232,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     //retrofit http (mode)
     public void send_mode_command(String mode) {
-        Mode md = new Mode(mode);
+        Mode md = new Mode(camera_num, mode);
 
         Call<List<mode_message>> call = service.get_mode_message(md);
 

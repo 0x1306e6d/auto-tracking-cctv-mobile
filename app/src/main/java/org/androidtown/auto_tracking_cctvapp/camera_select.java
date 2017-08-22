@@ -30,14 +30,13 @@ public class camera_select extends AppCompatActivity {
         listview = (ListView)findViewById(R.id.camera_list_view);
         listview.setAdapter(camera_list_adapter);
 
-        //get server ip_address, port num
         Intent intent = getIntent();
         server_ip_port_camera = (server_ip_port_camera)intent.getSerializableExtra("server_ip_port_camera");
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Integer selected_camera_num = parent.getSelectedItemPosition();
+                Integer selected_camera_num = position;
                 server_ip_port_camera.set_camera_num(selected_camera_num);
 
                 Intent intent = new Intent(
