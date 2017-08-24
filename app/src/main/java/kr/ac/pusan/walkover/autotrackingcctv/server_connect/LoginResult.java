@@ -2,10 +2,8 @@ package kr.ac.pusan.walkover.autotrackingcctv.server_connect;
 
 import java.io.Serializable;
 
-/**
- * Created by soeun on 2017-07-21.
- */
 public class LoginResult implements Serializable {
+
     private String ip_address, port_num;
     private Integer camera_num;
 
