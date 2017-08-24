@@ -21,7 +21,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".MainActivity_login" />
         <activity android:name=".camera_select" />
         <activity android:name=".selected_camera_play" />
 
