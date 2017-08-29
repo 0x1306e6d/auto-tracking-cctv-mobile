@@ -5,17 +5,10 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/player_frame_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <SurfaceView
-            android:id="@+id/SurfaceView"
-            android:layout_width="match_parent"
-            android:layout_height="275dp" />
-        <!--android:scaleType="fitXY"-->
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
     <Switch
         android:id="@+id/mode_switch"
