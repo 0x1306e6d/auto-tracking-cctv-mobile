@@ -11,8 +11,8 @@ import android.support.v4.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import kr.ac.pusan.walkover.autotrackingcctv.MainActivity_login;
 import kr.ac.pusan.walkover.autotrackingcctv.R;
+import kr.ac.pusan.walkover.autotrackingcctv.ui.LoginActivity;
 
 /**
  * Created by soeun on 2017-08-16.
@@ -40,7 +40,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity_login.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
