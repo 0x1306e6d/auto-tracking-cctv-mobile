@@ -18,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -44,14 +43,12 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     private static final String TAG = selected_camera_play.class.getSimpleName();
 
-    ImageView image_view;
     String str_recv;
 
     private Socket client_socket;
     private BufferedReader in;
     private OutputStreamWriter out;
     //private DataInputStream mInput;
-    private NetworkThread mNetworkThread;
 
     Switch mode_switch;
     ImageButton up_btn, left_btn, right_btn, down_btn;
@@ -66,10 +63,14 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
     Retrofit retrofit;
     RetrofitService service;
 
+    private ImageView mFrameImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.selected_camera_play);
+
+        mFrameImage = findViewById(R.id.player_frame_image);
 
         //execute
         direction_button_setting(); //when push direction image_buttons
@@ -107,9 +108,6 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
             }
         });
 
-        mNetworkThread = new NetworkThread();
-        mNetworkThread.start();
-
         Thread image_receive = new Thread() {
             public void run() {
                 try {
@@ -123,20 +121,21 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
                     client_socket.getOutputStream().write(buffer.array());
                     client_socket.getOutputStream().flush();
 
-                    str_recv = in.readLine();  //(\n앞에까지 읽어서 return)
-                    Log.d("CMA", "sended string: " + str_recv.length());
+                    while (true) {
+                        str_recv = in.readLine();  //(\n앞에까지 읽어서 return)
+                        Log.d("CMA", "sended string: " + str_recv.length());
 
-                    //decoding base64 string to image
-                    byte[] image_bytes = Base64.decode(str_recv, Base64.DEFAULT);
-                    final Bitmap decodedImage = BitmapFactory.decodeByteArray(image_bytes, 0, image_bytes.length);
+                        //decoding base64 string to image
+                        byte[] image_bytes = Base64.decode(str_recv, Base64.DEFAULT);
+                        final Bitmap decodedImage = BitmapFactory.decodeByteArray(image_bytes, 0, image_bytes.length);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            image_view.setImageBitmap(decodedImage);
-                        }
-                    });
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mFrameImage.setImageBitmap(decodedImage);
+                            }
+                        });
+                    }
                 } catch (Exception e) {
                     Log.e("CAE", "run: Image Receive Error", e);
                 }
@@ -248,22 +247,4 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
             }
         });
     }
-
-    private class NetworkThread extends Thread {
-        @Override
-        public void run() {
-            try {
-                client_socket = new Socket();
-                client_socket.connect(new InetSocketAddress(ip_address, socket_port_num)); //ip_address, socket_port_num
-                Log.d(TAG, "네트워크 연결 성공");
-
-                // mInput = new DataInputStream(client_socket.getInputStream());
-
-            } catch (IOException e) {
-                Log.e(TAG, "네트워크 연결 실패: ", e);
-            }
-        }
-    }
-
-
 }
