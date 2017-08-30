@@ -2,6 +2,8 @@ package kr.ac.pusan.walkover.autotrackingcctv.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -9,10 +11,14 @@ import android.view.MenuItem;
 
 import kr.ac.pusan.walkover.autotrackingcctv.AutoTrackingCCTVConstants;
 import kr.ac.pusan.walkover.autotrackingcctv.R;
+import kr.ac.pusan.walkover.autotrackingcctv.ui.adapter.CameraListRecyclerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private RecyclerView mRecycler;
+    private RecyclerView.Adapter mRecyclerAdapter;
 
     private String mIpAddress;
     private int mPort;
@@ -24,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
 
         setupToolbar();
+        setupRecycler();
+
         getExtra();
     }
 
@@ -69,6 +77,15 @@ public class MainActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             // TODO: 2017-08-30 configure support action bar
         }
+    }
+
+    private void setupRecycler() {
+        mRecycler = (RecyclerView) findViewById(R.id.main_recycler);
+        mRecycler.setHasFixedSize(true);
+        mRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        mRecyclerAdapter = new CameraListRecyclerAdapter();
+        mRecycler.setAdapter(mRecyclerAdapter);
     }
 
     private void getExtra() {
