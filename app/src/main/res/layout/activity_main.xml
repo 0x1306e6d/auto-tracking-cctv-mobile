@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     android:fitsSystemWindows="true"
     tools:context=".ui.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
+        android:background="@color/colorAppBar"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -22,7 +24,9 @@
                 android:id="@+id/main_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/toolbar_height"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin"
+                app:subtitleTextColor="@color/textColorDarkSecondary"
+                app:titleTextColor="@color/textColorDarkPrimary" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
