@@ -16,4 +16,12 @@ public class CameraListRecyclerViewHolder extends RecyclerView.ViewHolder {
         mIpAddress = itemView.findViewById(R.id.camera_card_ip_address);
         mName = itemView.findViewById(R.id.camera_card_name);
     }
+
+    public void setIpAddress(String ipAddress) {
+        mIpAddress.setText(ipAddress);
+    }
+
+    public void setName(String name) {
+        mName.setText(name);
+    }
 }

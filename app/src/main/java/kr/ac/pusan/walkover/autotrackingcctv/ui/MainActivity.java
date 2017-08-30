@@ -1,6 +1,7 @@
 package kr.ac.pusan.walkover.autotrackingcctv.ui;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,19 +10,30 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import kr.ac.pusan.walkover.autotrackingcctv.AutoTrackingCCTVConstants;
 import kr.ac.pusan.walkover.autotrackingcctv.R;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.CameraResponse;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.CameraService;
 import kr.ac.pusan.walkover.autotrackingcctv.ui.adapter.CameraListRecyclerAdapter;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private RecyclerView mRecycler;
-    private RecyclerView.Adapter mRecyclerAdapter;
+    private RecyclerView mCameraListRecycler;
+    private CameraListRecyclerAdapter mCameraListRecyclerAdapter;
 
     private String mIpAddress;
     private int mPort;
+
+    private Retrofit mRetrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +41,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
 
+        mIpAddress = getIntent().getStringExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY);
+        mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.PORT_KEY, AutoTrackingCCTVConstants.DEFAULT_PORT);
+        Log.d(TAG, "ipAddress = [" + mIpAddress + "], port = [" + mPort + "]");
+
         setupToolbar();
         setupRecycler();
-
-        getExtra();
+        setupRetrofit();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() called");
+
+        loadCameraListFromGateway();
     }
 
     @Override
@@ -80,17 +97,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRecycler() {
-        mRecycler = (RecyclerView) findViewById(R.id.main_recycler);
-        mRecycler.setHasFixedSize(true);
-        mRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mCameraListRecycler = (RecyclerView) findViewById(R.id.main_recycler);
+        mCameraListRecycler.setHasFixedSize(true);
+        mCameraListRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        mRecyclerAdapter = new CameraListRecyclerAdapter();
-        mRecycler.setAdapter(mRecyclerAdapter);
+        mCameraListRecyclerAdapter = new CameraListRecyclerAdapter();
+        mCameraListRecycler.setAdapter(mCameraListRecyclerAdapter);
     }
 
-    private void getExtra() {
-        mIpAddress = getIntent().getStringExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY);
-        mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.PORT_KEY, AutoTrackingCCTVConstants.DEFAULT_PORT);
-        Log.d(TAG, "getExtra() called. ipAddress=" + mIpAddress + ", port=" + mPort);
+    private void setupRetrofit() {
+        String baseUrl = "http://" + mIpAddress + ":" + mPort + "/";
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    private void loadCameraListFromGateway() {
+        CameraService cameraService = mRetrofit.create(CameraService.class);
+        cameraService.cameraList()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<CameraResponse>>() {
+                    @Override
+                    public void accept(final List<CameraResponse> cameraResponses) throws Exception {
+                        mCameraListRecyclerAdapter.changeDataSet(cameraResponses);
+                        mCameraListRecyclerAdapter.notifyDataSetChanged();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, "Failed to load camera list from gateway.", throwable);
+                        Snackbar.make(mCameraListRecycler, "Loading camera list is failed.", Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+                });
     }
 }
