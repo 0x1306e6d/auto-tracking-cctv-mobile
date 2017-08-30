@@ -8,9 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import kr.ac.pusan.walkover.autotrackingcctv.AutoTrackingCCTVConstants;
 import kr.ac.pusan.walkover.autotrackingcctv.R;
-import kr.ac.pusan.walkover.autotrackingcctv.camera_select;
-import kr.ac.pusan.walkover.autotrackingcctv.server_connect.LoginResult;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -38,16 +37,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onConnectButtonClicked() {
         String ipAddress = mIpAddress.getText().toString();
-        String port = mPort.getText().toString(); // TODO: 2017-08-24 parseInt
+        int port = Integer.parseInt(mPort.getText().toString());
         Log.d(TAG, "onConnectButtonClicked() called. ipAddress=" + ipAddress + ", port=" + port);
 
-        // TODO: 2017-08-24 Rename LoginResult to ????
-        LoginResult loginResult = new LoginResult();
-        loginResult.set_ip_address(ipAddress);
-        loginResult.set_port_num(port);
-
-        Intent intent = new Intent(this, camera_select.class);
-        intent.putExtra("LoginResult", loginResult);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY, ipAddress);
+        intent.putExtra(AutoTrackingCCTVConstants.PORT_KEY, port);
         startActivity(intent);
         finish();
     }

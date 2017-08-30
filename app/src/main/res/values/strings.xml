@@ -4,4 +4,6 @@
     <string name="ip_address">IP Address</string>
     <string name="port">Port</string>
     <string name="connect">Connect</string>
+
+    <string name="settings">Settings</string>
 </resources>
