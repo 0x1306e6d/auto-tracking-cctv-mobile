@@ -12,9 +12,14 @@ import kr.ac.pusan.walkover.autotrackingcctv.retrofit.CameraResponse;
 
 public class CameraListRecyclerAdapter extends RecyclerView.Adapter<CameraListRecyclerViewHolder> {
 
-    private static final String TAG = CameraListRecyclerAdapter.class.getSimpleName();
-
     private List<CameraResponse> mDataSet;
+    private final OnCameraCardClickedListener mOnClickedListener;
+    private final OnCameraCardLongClickedListener mOnLongClickedListener;
+
+    public CameraListRecyclerAdapter(OnCameraCardClickedListener onClicked, OnCameraCardLongClickedListener onLongClicked) {
+        mOnClickedListener = onClicked;
+        mOnLongClickedListener = onLongClicked;
+    }
 
     public void changeDataSet(List<CameraResponse> dataSet) {
         mDataSet = dataSet;
@@ -24,12 +29,13 @@ public class CameraListRecyclerAdapter extends RecyclerView.Adapter<CameraListRe
     public CameraListRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.camera_card, parent, false);
-        return new CameraListRecyclerViewHolder(view);
+        return new CameraListRecyclerViewHolder(view, mOnClickedListener, mOnLongClickedListener);
     }
 
     @Override
     public void onBindViewHolder(CameraListRecyclerViewHolder holder, int position) {
         CameraResponse cameraResponse = mDataSet.get(position);
+        holder.setCameraId(cameraResponse.getId());
         holder.setIpAddress(cameraResponse.getIpAddress());
         holder.setName(cameraResponse.getName());
     }
