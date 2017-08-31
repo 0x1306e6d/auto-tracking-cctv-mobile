@@ -1,76 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    app:layout_collapseParallaxMultiplier="0.9">
 
     <ImageView
         android:id="@+id/player_frame_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="276dp" />
 
     <Switch
         android:id="@+id/mode_switch"
+        style="@android:style/Widget.Holo.Light.CompoundButton.Switch"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:checked="true"
-        android:text="Auto Tracking "
+        android:fadeScrollbars="false"
+        android:showText="true"
+        android:splitTrack="false"
+        android:text="AUTO TRACKING"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColorLink="@color/textColorDarkSecondary"
         android:textOff="Off"
-        android:textOn="On" />
+        android:textOn="On"
+        android:textStyle="italic" />
 
     <TableLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:gravity="center">
 
         <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:gravity="center">
 
             <ImageButton
                 android:id="@+id/up_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
+                style="@style/Widget.AppCompat.ImageButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_column="0"
+                android:layout_gravity="center_vertical"
+                android:adjustViewBounds="false"
+                android:cropToPadding="false"
+                android:elevation="15dp"
                 android:padding="0dp"
-                android:src="@drawable/up" />
+                android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
+                android:visibility="visible" />
         </TableRow>
 
         <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
 
             <ImageButton
                 android:id="@+id/left_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_column="0"
+                android:elevation="15dp"
                 android:padding="0dp"
-                android:src="@drawable/left" />
+                android:src="@drawable/ic_keyboard_arrow_left_black_24dp" />
+
+            <ImageButton
+                android:layout_column="1"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:visibility="invisible" />
 
             <ImageButton
                 android:id="@+id/right_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_column="2"
+                android:elevation="15dp"
                 android:padding="0dp"
-                android:src="@drawable/right" />
+                android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
         </TableRow>
 
         <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center">
 
             <ImageButton
                 android:id="@+id/down_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
+                style="@style/Widget.AppCompat.ImageButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_column="0"
+                android:elevation="15dp"
                 android:padding="0dp"
-                android:src="@drawable/down" />
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
         </TableRow>
     </TableLayout>
 
