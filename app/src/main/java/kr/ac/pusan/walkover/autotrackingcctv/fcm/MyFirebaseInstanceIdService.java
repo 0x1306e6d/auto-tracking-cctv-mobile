@@ -6,11 +6,20 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import java.io.IOException;
+import java.util.List;
 
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.RetrofitService;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_Token;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_token_message;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by soeun on 2017-08-17.
@@ -18,9 +27,12 @@ import okhttp3.RequestBody;
 public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     private final static String TAG = "MyFirebaseIIdService";
 
+    Retrofit retrofit;
+    RetrofitService service;
+
     @Override
     public void onTokenRefresh() {
-//        super.onTokenRefresh();
+        super.onTokenRefresh();
         String token = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + token);
 
@@ -28,22 +40,27 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     }
 
     private void sendRegistrationToServer(String token) {
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = new FormBody.Builder()
-                .add("Token", token)
+        retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.123.14:80/") //??
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
+        service = retrofit.create(RetrofitService.class);
 
-        //request
-        Request request = new Request.Builder()
-                .url("http://164.125.68.74/fcm/register") //수정
-                .post(body)
-                .build();
+        fcm_Token fcm_token = new fcm_Token(token);
 
-        try {
-            client.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Call<List<fcm_token_message>> call = service.get_token_message(fcm_token);
+
+        call.enqueue(new Callback<List<fcm_token_message>>() {
+            @Override
+            public void onResponse(Call<List<fcm_token_message>> call, Response<List<fcm_token_message>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<fcm_token_message>> call, Throwable t) {
+
+            }
+        });
     }
 
 }

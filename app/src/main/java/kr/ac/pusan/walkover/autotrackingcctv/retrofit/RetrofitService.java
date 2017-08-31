@@ -19,6 +19,9 @@ public interface RetrofitService {
     @POST("mode")
     Call<List<mode_message>> get_mode_message(@Body Mode mode);
 
+    @POST("token")
+    Call<List<fcm_token_message>> get_token_message(@Body fcm_Token token);
+
 
 //    @POST("token")
 //    Call<List<token_message>> get_token_message(@Body Mode mode);
