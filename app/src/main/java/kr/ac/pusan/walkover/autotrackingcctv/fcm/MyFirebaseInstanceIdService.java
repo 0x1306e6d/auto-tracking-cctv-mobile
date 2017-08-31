@@ -41,7 +41,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
     private void sendRegistrationToServer(String token) {
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://172.30.1.57:80/") //??
+                .baseUrl("http://192.168.123.14:80/") //??
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         service = retrofit.create(RetrofitService.class);
