@@ -1,7 +1,6 @@
 package kr.ac.pusan.walkover.autotrackingcctv;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -28,7 +27,6 @@ import kr.ac.pusan.walkover.autotrackingcctv.retrofit.Mode;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.RetrofitService;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.direction_message;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.mode_message;
-import kr.ac.pusan.walkover.autotrackingcctv.server_connect.LoginResult;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,17 +51,14 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
     Switch mode_switch;
     ImageButton up_btn, left_btn, right_btn, down_btn;
 
-//    private static final long TIMEOUT = 0;
-//    private static final String MIME = "video/avc";
-
-    LoginResult server_ip_port_camera; //server info object(ip address, port num)
-    String ip_address;
-    Integer http_port_num, socket_port_num, camera_num; //selected camera number
-
     Retrofit retrofit;
     RetrofitService service;
 
     private ImageView mFrameImage;
+
+    private String mIpAddress;
+    private int mPort;
+    private int mCameraId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,18 +70,14 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         //execute
         direction_button_setting(); //when push direction image_buttons
 
-        //get server ip_address, port num
-        Intent intent = getIntent();
-        server_ip_port_camera = (LoginResult) intent.getSerializableExtra("LoginResult");
-        ip_address = server_ip_port_camera.get_ip_address();
-        http_port_num = Integer.parseInt(server_ip_port_camera.get_port_num());
-        socket_port_num = http_port_num;
-        camera_num = server_ip_port_camera.get_camera_num();
-
-        Log.d("camera_num", camera_num.toString());
-
+        mIpAddress = getIntent().getStringExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY);
+        mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.PORT_KEY, AutoTrackingCCTVConstants.DEFAULT_PORT);
+        mCameraId = getIntent().getIntExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
+        if (mCameraId == -1) {
+            finish();
+        }
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + ip_address + ":" + http_port_num + "/")
+                .baseUrl("http://" + mIpAddress + ":" + mPort + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         service = retrofit.create(RetrofitService.class);
@@ -111,13 +102,13 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         Thread image_receive = new Thread() {
             public void run() {
                 try {
-                    client_socket = new Socket(ip_address, socket_port_num);
+                    client_socket = new Socket(mIpAddress, mPort + 1);
 
                     in = new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
 
                     ByteBuffer buffer = ByteBuffer.allocate(4);
                     buffer.order(ByteOrder.BIG_ENDIAN);
-                    buffer.putInt(camera_num);
+                    buffer.putInt(mCameraId);
                     client_socket.getOutputStream().write(buffer.array());
                     client_socket.getOutputStream().flush();
 
@@ -208,7 +199,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     //retrofit http (direction)
     public void send_direction_command(String direction) {
-        Direction dir = new Direction(camera_num, direction);
+        Direction dir = new Direction(mCameraId, direction);
 
         Call<List<direction_message>> call = service.get_direction_message(dir);
 
@@ -231,7 +222,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     //retrofit http (mode)
     public void send_mode_command(String mode) {
-        Mode md = new Mode(camera_num, mode);
+        Mode md = new Mode(mCameraId, mode);
 
         Call<List<mode_message>> call = service.get_mode_message(md);
 

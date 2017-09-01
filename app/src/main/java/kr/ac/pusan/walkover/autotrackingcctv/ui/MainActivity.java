@@ -1,5 +1,6 @@
 package kr.ac.pusan.walkover.autotrackingcctv.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.List;
 
@@ -18,7 +20,10 @@ import kr.ac.pusan.walkover.autotrackingcctv.AutoTrackingCCTVConstants;
 import kr.ac.pusan.walkover.autotrackingcctv.R;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.CameraResponse;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.CameraService;
+import kr.ac.pusan.walkover.autotrackingcctv.selected_camera_play;
 import kr.ac.pusan.walkover.autotrackingcctv.ui.adapter.CameraListRecyclerAdapter;
+import kr.ac.pusan.walkover.autotrackingcctv.ui.adapter.OnCameraCardClickedListener;
+import kr.ac.pusan.walkover.autotrackingcctv.ui.adapter.OnCameraCardLongClickedListener;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -101,7 +106,20 @@ public class MainActivity extends AppCompatActivity {
         mCameraListRecycler.setHasFixedSize(true);
         mCameraListRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        mCameraListRecyclerAdapter = new CameraListRecyclerAdapter();
+        mCameraListRecyclerAdapter = new CameraListRecyclerAdapter(
+                new OnCameraCardClickedListener() {
+                    @Override
+                    public void onClicked(View view, int cameraId) {
+                        onCameraCardClicked(view, cameraId);
+                    }
+                },
+                new OnCameraCardLongClickedListener() {
+                    @Override
+                    public boolean onLongClicked(View view, int cameraId) {
+                        return onCameraCardLongClicked(view, cameraId);
+                    }
+                }
+        );
         mCameraListRecycler.setAdapter(mCameraListRecyclerAdapter);
     }
 
@@ -132,5 +150,17 @@ public class MainActivity extends AppCompatActivity {
                                 .show();
                     }
                 });
+    }
+
+    private void onCameraCardClicked(View view, int cameraId) {
+        Intent intent = new Intent(this, selected_camera_play.class);
+        intent.putExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY, mIpAddress);
+        intent.putExtra(AutoTrackingCCTVConstants.PORT_KEY, mPort);
+        intent.putExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, cameraId);
+        startActivity(intent);
+    }
+
+    private boolean onCameraCardLongClicked(View view, int cameraId) {
+        return true;
     }
 }
