@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">AutoTrackingCCTV</string>
 
+    <string name="app_name_0">AUTO</string>
+    <string name="app_name_1">TRACKING</string>
+    <string name="app_name_2">CCTV</string>
+
     <string name="ip_address">IP Address</string>
     <string name="port">Port</string>
     <string name="connect">Connect</string>
