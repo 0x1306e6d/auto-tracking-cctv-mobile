@@ -11,7 +11,7 @@ public class CameraListRecyclerViewHolder extends RecyclerView.ViewHolder {
     private TextView mIpAddressView;
     private TextView mNameView;
 
-    private int mCameraId;
+    private long mCameraId;
     private String mIpAddress;
     private String mName;
 
@@ -46,7 +46,7 @@ public class CameraListRecyclerViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void setCameraId(int cameraId) {
+    public void setCameraId(long cameraId) {
         mCameraId = cameraId;
     }
 

@@ -3,5 +3,5 @@ package kr.ac.pusan.walkover.autotrackingcctv.ui.adapter;
 import android.view.View;
 
 public interface OnCameraCardLongClickedListener {
-    boolean onLongClicked(View view, int cameraId);
+    boolean onLongClicked(View view, long cameraId);
 }

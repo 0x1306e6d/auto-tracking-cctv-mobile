@@ -14,11 +14,10 @@ import android.view.View;
 
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import kr.ac.pusan.walkover.autotrackingcctv.AutoTrackingCCTVConstants;
 import kr.ac.pusan.walkover.autotrackingcctv.R;
-import kr.ac.pusan.walkover.autotrackingcctv.retrofit.CameraResponse;
+import kr.ac.pusan.walkover.autotrackingcctv.model.CameraModel;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.CameraService;
 import kr.ac.pusan.walkover.autotrackingcctv.selected_camera_play;
 import kr.ac.pusan.walkover.autotrackingcctv.ui.adapter.CameraListRecyclerAdapter;
@@ -109,13 +108,13 @@ public class MainActivity extends AppCompatActivity {
         mCameraListRecyclerAdapter = new CameraListRecyclerAdapter(
                 new OnCameraCardClickedListener() {
                     @Override
-                    public void onClicked(View view, int cameraId) {
+                    public void onClicked(View view, long cameraId) {
                         onCameraCardClicked(view, cameraId);
                     }
                 },
                 new OnCameraCardLongClickedListener() {
                     @Override
-                    public boolean onLongClicked(View view, int cameraId) {
+                    public boolean onLongClicked(View view, long cameraId) {
                         return onCameraCardLongClicked(view, cameraId);
                     }
                 }
@@ -135,24 +134,33 @@ public class MainActivity extends AppCompatActivity {
     private void loadCameraListFromGateway() {
         CameraService cameraService = mRetrofit.create(CameraService.class);
         cameraService.cameraList()
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<CameraResponse>>() {
+                .subscribe(new Consumer<List<CameraModel>>() {
                     @Override
-                    public void accept(final List<CameraResponse> cameraResponses) throws Exception {
-                        mCameraListRecyclerAdapter.changeDataSet(cameraResponses);
-                        mCameraListRecyclerAdapter.notifyDataSetChanged();
+                    public void accept(List<CameraModel> cameraModels) throws Exception {
+                        mCameraListRecyclerAdapter.changeDataSet(cameraModels);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCameraListRecyclerAdapter.notifyDataSetChanged();
+                            }
+                        });
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.e(TAG, "Failed to load camera list from gateway.", throwable);
-                        Snackbar.make(mCameraListRecycler, "Loading camera list is failed.", Snackbar.LENGTH_SHORT)
-                                .show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Snackbar.make(mCameraListRecycler, "Loading camera list is failed.", Snackbar.LENGTH_SHORT)
+                                        .show();
+                            }
+                        });
                     }
                 });
     }
 
-    private void onCameraCardClicked(View view, int cameraId) {
+    private void onCameraCardClicked(View view, long cameraId) {
         Intent intent = new Intent(this, selected_camera_play.class);
         intent.putExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY, mIpAddress);
         intent.putExtra(AutoTrackingCCTVConstants.PORT_KEY, mPort);
@@ -160,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private boolean onCameraCardLongClicked(View view, int cameraId) {
+    private boolean onCameraCardLongClicked(View view, long cameraId) {
         return true;
     }
 }

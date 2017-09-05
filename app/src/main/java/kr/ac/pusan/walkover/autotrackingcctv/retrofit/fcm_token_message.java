@@ -6,7 +6,7 @@ package kr.ac.pusan.walkover.autotrackingcctv.retrofit;
 
 public class fcm_token_message {
 
-//    private Integer camera_num;
+    //    private Integer camera_num;
     private String token_message;
 
 }

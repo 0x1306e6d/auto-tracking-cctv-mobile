@@ -5,16 +5,11 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
-import java.io.IOException;
 import java.util.List;
 
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.RetrofitService;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_Token;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_token_message;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
