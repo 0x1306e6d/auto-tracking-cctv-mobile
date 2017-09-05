@@ -20,16 +20,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.List;
 
-import kr.ac.pusan.walkover.autotrackingcctv.retrofit.Direction;
-import kr.ac.pusan.walkover.autotrackingcctv.retrofit.Mode;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.RetrofitService;
-import kr.ac.pusan.walkover.autotrackingcctv.retrofit.direction_message;
-import kr.ac.pusan.walkover.autotrackingcctv.retrofit.mode_message;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -58,7 +50,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     private String mIpAddress;
     private int mPort;
-    private int mCameraId;
+    private long mCameraId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +64,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
         mIpAddress = getIntent().getStringExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY);
         mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.PORT_KEY, AutoTrackingCCTVConstants.DEFAULT_PORT);
-        mCameraId = getIntent().getIntExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
+        mCameraId = getIntent().getLongExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
         if (mCameraId == -1) {
             finish();
         }
@@ -106,9 +98,9 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
                     in = new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
 
-                    ByteBuffer buffer = ByteBuffer.allocate(4);
+                    ByteBuffer buffer = ByteBuffer.allocate(8);
                     buffer.order(ByteOrder.BIG_ENDIAN);
-                    buffer.putInt(mCameraId);
+                    buffer.putLong(mCameraId);
                     client_socket.getOutputStream().write(buffer.array());
                     client_socket.getOutputStream().flush();
 
@@ -199,21 +191,21 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     //retrofit http (direction)
     public void send_direction_command(String direction) {
-        Direction dir = new Direction(mCameraId, direction);
-
-        Call<List<direction_message>> call = service.get_direction_message(dir);
-
-        call.enqueue(new Callback<List<direction_message>>() {
-            @Override
-            public void onResponse(Call<List<direction_message>> call, Response<List<direction_message>> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<List<direction_message>> call, Throwable t) {
-
-            }
-        });
+//        Direction dir = new Direction(mCameraId, direction);
+//
+//        Call<List<direction_message>> call = service.get_direction_message(dir);
+//
+//        call.enqueue(new Callback<List<direction_message>>() {
+//            @Override
+//            public void onResponse(Call<List<direction_message>> call, Response<List<direction_message>> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<direction_message>> call, Throwable t) {
+//
+//            }
+//        });
         //Log.d("SEND", "send_direction_command() returned: " + call.request());
         //Log.d("EXCUTED", "send_direction_command() returned: " + call.isExecuted());
         //Log.d("CANCELED", "send_direction_command() returned: " + call.isCanceled());
@@ -222,20 +214,20 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     //retrofit http (mode)
     public void send_mode_command(String mode) {
-        Mode md = new Mode(mCameraId, mode);
-
-        Call<List<mode_message>> call = service.get_mode_message(md);
-
-        call.enqueue(new Callback<List<mode_message>>() {
-            @Override
-            public void onResponse(Call<List<mode_message>> call, Response<List<mode_message>> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<List<mode_message>> call, Throwable t) {
-
-            }
-        });
+//        Mode md = new Mode(mCameraId, mode);
+//
+//        Call<List<mode_message>> call = service.get_mode_message(md);
+//
+//        call.enqueue(new Callback<List<mode_message>>() {
+//            @Override
+//            public void onResponse(Call<List<mode_message>> call, Response<List<mode_message>> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<mode_message>> call, Throwable t) {
+//
+//            }
+//        });
     }
 }

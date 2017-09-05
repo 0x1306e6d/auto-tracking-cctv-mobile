@@ -9,7 +9,7 @@ public class fcm_Token {
     private String token;
 
     public fcm_Token(String token) {
-      //  this.camera_num = camera_num;
+        //  this.camera_num = camera_num;
         this.token = token;
     }
 
