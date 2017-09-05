@@ -50,7 +50,8 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     private String mIpAddress;
     private int mPort;
-    private long mCameraId;
+    private int tcpPort;
+    private int mCameraId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +64,9 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         direction_button_setting(); //when push direction image_buttons
 
         mIpAddress = getIntent().getStringExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY);
-        mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.PORT_KEY, AutoTrackingCCTVConstants.DEFAULT_PORT);
-        mCameraId = getIntent().getLongExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
+        mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.HTTP_PORT_KEY, AutoTrackingCCTVConstants.HTTP_PORT);
+        tcpPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.TCP_PORT_KEY, AutoTrackingCCTVConstants.TCP_PORT);
+        mCameraId = getIntent().getIntExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
         if (mCameraId == -1) {
             finish();
         }
@@ -94,7 +96,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         Thread image_receive = new Thread() {
             public void run() {
                 try {
-                    client_socket = new Socket(mIpAddress, mPort + 1);
+                    client_socket = new Socket(mIpAddress, tcpPort);
 
                     in = new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
 

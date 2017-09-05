@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import kr.ac.pusan.walkover.autotrackingcctv.AutoTrackingCCTVConstants;
 import kr.ac.pusan.walkover.autotrackingcctv.R;
@@ -16,7 +17,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private TextInputEditText mIpAddress;
-    private TextInputEditText mPort;
     private Button mConnectButton;
 
     @Override
@@ -25,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mIpAddress = (TextInputEditText) findViewById(R.id.login_text_ip_address);
-        mPort = (TextInputEditText) findViewById(R.id.login_text_port);
         mConnectButton = (Button) findViewById(R.id.login_button_connect);
         mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,13 +36,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onConnectButtonClicked() {
         String ipAddress = mIpAddress.getText().toString();
-        int port = Integer.parseInt(mPort.getText().toString());
-        Log.d(TAG, "onConnectButtonClicked() called. ipAddress=" + ipAddress + ", port=" + port);
+        if (ipAddress.length() <= 0) {
+            Toast.makeText(getApplicationContext(), "PLEASE INPUT IP ADDRESS", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.d(TAG, "onConnectButtonClicked() called. ipAddress=" + ipAddress );
 
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY, ipAddress);
-        intent.putExtra(AutoTrackingCCTVConstants.PORT_KEY, port);
-        startActivity(intent);
-        finish();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY, ipAddress);
+            startActivity(intent);
+            finish();
+        }
     }
 }
