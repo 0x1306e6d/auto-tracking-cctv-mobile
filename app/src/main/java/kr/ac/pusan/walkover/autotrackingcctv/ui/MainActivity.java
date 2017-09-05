@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
 
         mIpAddress = getIntent().getStringExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY);
-        mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.PORT_KEY, AutoTrackingCCTVConstants.DEFAULT_PORT);
+        mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.HTTP_PORT_KEY, AutoTrackingCCTVConstants.HTTP_PORT);
         Log.d(TAG, "ipAddress = [" + mIpAddress + "], port = [" + mPort + "]");
 
         setupToolbar();
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
     private void onCameraCardClicked(View view, int cameraId) {
         Intent intent = new Intent(this, selected_camera_play.class);
         intent.putExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY, mIpAddress);
-        intent.putExtra(AutoTrackingCCTVConstants.PORT_KEY, mPort);
+        intent.putExtra(AutoTrackingCCTVConstants.HTTP_PORT_KEY, mPort);
         intent.putExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, cameraId);
         startActivity(intent);
     }
