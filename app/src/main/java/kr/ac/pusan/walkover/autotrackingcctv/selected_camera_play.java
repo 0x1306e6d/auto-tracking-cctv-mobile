@@ -1,6 +1,7 @@
 package kr.ac.pusan.walkover.autotrackingcctv;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -20,8 +21,14 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.List;
 
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.RetrofitService;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_Token;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_token_message;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -32,6 +39,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class selected_camera_play extends Activity { //implements SurfaceHolder.Callback {
 
     private static final String TAG = selected_camera_play.class.getSimpleName();
+
+    SharedPreferences mPref;
+    SharedPreferences.Editor mEditor;
+//    String new_token, old_token;
 
     String str_recv;
 
@@ -51,7 +62,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
     private String mIpAddress;
     private int mPort;
     private int tcpPort;
-    private int mCameraId;
+    private long mCameraId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +77,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         mIpAddress = getIntent().getStringExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY);
         mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.HTTP_PORT_KEY, AutoTrackingCCTVConstants.HTTP_PORT);
         tcpPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.TCP_PORT_KEY, AutoTrackingCCTVConstants.TCP_PORT);
-        mCameraId = getIntent().getIntExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
+        mCameraId = getIntent().getLongExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
         if (mCameraId == -1) {
             finish();
         }
@@ -92,6 +103,25 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
                 }
             }
         });
+
+
+        mPref = getSharedPreferences("Token_Pref", MODE_PRIVATE);
+        mEditor = mPref.edit();
+//        Log.d(TAG, "22 Shared Preference new Token :"+ mPref.getString("newToken",""));
+
+        Thread sendToken = new Thread() {
+            public void run() {
+                try {
+                    if (mPref.getString("newToken","").length() > 0) {
+                        sendRegistrationToServer(mPref.getString("newToken", ""));
+                    }
+                } catch (Exception e) {
+                    Log.e("CAE", "run: Send Token Error", e);
+                }
+            }
+        };
+        sendToken.start();
+
 
         Thread image_receive = new Thread() {
             public void run() {
@@ -232,4 +262,26 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 //            }
 //        });
     }
-}
+
+    private void sendRegistrationToServer(final String newToken) {
+
+        fcm_Token fcm_token = new fcm_Token(newToken);
+
+        Call<List<fcm_token_message>> call = service.get_token_message(fcm_token);
+
+        call.enqueue(new Callback<List<fcm_token_message>>() {
+            @Override
+            public void onResponse(Call<List<fcm_token_message>> call, Response<List<fcm_token_message>> response) {
+                mEditor.putString("oldToken", newToken);
+                mEditor.putString("newToken","");
+                mEditor.commit();
+            }
+
+            @Override
+            public void onFailure(Call<List<fcm_token_message>> call, Throwable t) {
+                sendRegistrationToServer(newToken);
+            }
+        });
+    }
+
+    }
