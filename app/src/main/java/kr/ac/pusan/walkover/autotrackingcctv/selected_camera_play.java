@@ -23,9 +23,14 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
 
+import kr.ac.pusan.walkover.autotrackingcctv.model.ResponseModel;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.Direction;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.Mode;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.RetrofitService;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.direction_message;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_Token;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_token_message;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.mode_message;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,8 +45,8 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     private static final String TAG = selected_camera_play.class.getSimpleName();
 
-    SharedPreferences mPref;
-    SharedPreferences.Editor mEditor;
+//    SharedPreferences mPref;
+//    SharedPreferences.Editor mEditor;
 //    String new_token, old_token;
 
     String str_recv;
@@ -104,23 +109,6 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
             }
         });
 
-
-        mPref = getSharedPreferences("Token_Pref", MODE_PRIVATE);
-        mEditor = mPref.edit();
-//        Log.d(TAG, "22 Shared Preference new Token :"+ mPref.getString("newToken",""));
-
-        Thread sendToken = new Thread() {
-            public void run() {
-                try {
-                    if (mPref.getString("newToken","").length() > 0) {
-                        sendRegistrationToServer(mPref.getString("newToken", ""));
-                    }
-                } catch (Exception e) {
-                    Log.e("CAE", "run: Send Token Error", e);
-                }
-            }
-        };
-        sendToken.start();
 
 
         Thread image_receive = new Thread() {
@@ -187,28 +175,28 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         up_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_direction_command("UP");  //서버에 "up" 보내기
+                send_direction_command(1);  //서버에 "up" 보내기
             }
         });
 
         left_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_direction_command("LEFT");  //서버에 "left" 보내기
+                send_direction_command(4);  //서버에 "left" 보내기
             }
         });
 
         right_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_direction_command("RIGHT");  //서버에 "right" 보내기
+                send_direction_command(8);  //서버에 "right" 보내기
             }
         });
 
         down_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_direction_command("DOWN");  //서버에 "down" 보내기
+                send_direction_command(2);  //서버에 "down" 보내기
             }
         });
     }
@@ -222,22 +210,23 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
     }
 
     //retrofit http (direction)
-    public void send_direction_command(String direction) {
-//        Direction dir = new Direction(mCameraId, direction);
-//
-//        Call<List<direction_message>> call = service.get_direction_message(dir);
-//
-//        call.enqueue(new Callback<List<direction_message>>() {
-//            @Override
-//            public void onResponse(Call<List<direction_message>> call, Response<List<direction_message>> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<direction_message>> call, Throwable t) {
-//
-//            }
-//        });
+    public void send_direction_command(int direction) {
+        Direction dir = new Direction(mCameraId, direction);
+
+        Call<ResponseModel> call = service.get_direction_message(mCameraId, dir);
+
+        call.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                Log.d(TAG, "direction() called with: call = [" + call + "], response = [" + response + "]");
+                Log.d(TAG, "direction(): " + response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d(TAG, "onFailure() called with: call = [" + call + "], t = [" + t + "]");
+            }
+        });
         //Log.d("SEND", "send_direction_command() returned: " + call.request());
         //Log.d("EXCUTED", "send_direction_command() returned: " + call.isExecuted());
         //Log.d("CANCELED", "send_direction_command() returned: " + call.isCanceled());
@@ -246,40 +235,19 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     //retrofit http (mode)
     public void send_mode_command(String mode) {
-//        Mode md = new Mode(mCameraId, mode);
-//
-//        Call<List<mode_message>> call = service.get_mode_message(md);
-//
-//        call.enqueue(new Callback<List<mode_message>>() {
-//            @Override
-//            public void onResponse(Call<List<mode_message>> call, Response<List<mode_message>> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<mode_message>> call, Throwable t) {
-//
-//            }
-//        });
-    }
+        Mode md = new Mode(mCameraId, mode);
 
-    private void sendRegistrationToServer(final String newToken) {
+        Call<ResponseModel> call = service.get_mode_message(mCameraId, md);
 
-        fcm_Token fcm_token = new fcm_Token(newToken);
-
-        Call<List<fcm_token_message>> call = service.get_token_message(fcm_token);
-
-        call.enqueue(new Callback<List<fcm_token_message>>() {
+        call.enqueue(new Callback<ResponseModel>() {
             @Override
-            public void onResponse(Call<List<fcm_token_message>> call, Response<List<fcm_token_message>> response) {
-                mEditor.putString("oldToken", newToken);
-                mEditor.putString("newToken","");
-                mEditor.commit();
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                Log.d(TAG, "mode() called with: call = [" + call + "], response = [" + response + "]");
             }
 
             @Override
-            public void onFailure(Call<List<fcm_token_message>> call, Throwable t) {
-                sendRegistrationToServer(newToken);
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d(TAG, "onFailure() called with: call = [" + call + "], t = [" + t + "]");
             }
         });
     }

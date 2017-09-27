@@ -1,6 +1,7 @@
 package kr.ac.pusan.walkover.autotrackingcctv.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +19,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText mIpAddress;
     private Button mConnectButton;
+//    SharedPreferences mPref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+//        mPref = getApplicationContext().getSharedPreferences("Token_Pref",MODE_PRIVATE);
 
         mIpAddress = (TextInputEditText) findViewById(R.id.login_text_ip_address);
         mConnectButton = (Button) findViewById(R.id.login_button_connect);
@@ -32,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
                 onConnectButtonClicked();
             }
         });
+
     }
 
     private void onConnectButtonClicked() {
@@ -41,9 +47,12 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "onConnectButtonClicked() called. ipAddress=" + ipAddress );
 
+//            Log.d(TAG, "Shared Preference new Token :"+ mPref.getString("newToken",""));
+
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY, ipAddress);
             startActivity(intent);
+
             finish();
         }
     }

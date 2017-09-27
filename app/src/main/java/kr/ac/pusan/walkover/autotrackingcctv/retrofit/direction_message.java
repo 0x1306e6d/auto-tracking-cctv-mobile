@@ -5,6 +5,6 @@ package kr.ac.pusan.walkover.autotrackingcctv.retrofit;
  */
 public class direction_message {
 
-    private String direction_message;
+    private int direction_message;
 
 }
