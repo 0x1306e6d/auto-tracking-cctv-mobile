@@ -4,10 +4,10 @@ package kr.ac.pusan.walkover.autotrackingcctv.retrofit;
  * Created by soeun on 2017-07-24.
  */
 public class Direction {
-    private Integer camera_num;
-    private String direction;
+    private long camera_num;
+    private int direction;
 
-    public Direction(Integer camera_num, String direction) {
+    public Direction(long camera_num, int direction) {
         this.camera_num = camera_num;
         this.direction = direction;
     }

@@ -1,6 +1,7 @@
 package kr.ac.pusan.walkover.autotrackingcctv;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -20,8 +21,19 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.List;
 
+import kr.ac.pusan.walkover.autotrackingcctv.model.ResponseModel;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.Direction;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.Mode;
 import kr.ac.pusan.walkover.autotrackingcctv.retrofit.RetrofitService;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.direction_message;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_Token;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.fcm_token_message;
+import kr.ac.pusan.walkover.autotrackingcctv.retrofit.mode_message;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -32,6 +44,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class selected_camera_play extends Activity { //implements SurfaceHolder.Callback {
 
     private static final String TAG = selected_camera_play.class.getSimpleName();
+
+//    SharedPreferences mPref;
+//    SharedPreferences.Editor mEditor;
+//    String new_token, old_token;
 
     String str_recv;
 
@@ -51,7 +67,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
     private String mIpAddress;
     private int mPort;
     private int tcpPort;
-    private int mCameraId;
+    private long mCameraId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +82,7 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         mIpAddress = getIntent().getStringExtra(AutoTrackingCCTVConstants.IP_ADDRESS_KEY);
         mPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.HTTP_PORT_KEY, AutoTrackingCCTVConstants.HTTP_PORT);
         tcpPort = getIntent().getIntExtra(AutoTrackingCCTVConstants.TCP_PORT_KEY, AutoTrackingCCTVConstants.TCP_PORT);
-        mCameraId = getIntent().getIntExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
+        mCameraId = getIntent().getLongExtra(AutoTrackingCCTVConstants.CAMERA_ID_KEY, -1);
         if (mCameraId == -1) {
             finish();
         }
@@ -92,6 +108,8 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
                 }
             }
         });
+
+
 
         Thread image_receive = new Thread() {
             public void run() {
@@ -157,28 +175,28 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
         up_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_direction_command("UP");  //서버에 "up" 보내기
+                send_direction_command(1);  //서버에 "up" 보내기
             }
         });
 
         left_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_direction_command("LEFT");  //서버에 "left" 보내기
+                send_direction_command(4);  //서버에 "left" 보내기
             }
         });
 
         right_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_direction_command("RIGHT");  //서버에 "right" 보내기
+                send_direction_command(8);  //서버에 "right" 보내기
             }
         });
 
         down_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_direction_command("DOWN");  //서버에 "down" 보내기
+                send_direction_command(2);  //서버에 "down" 보내기
             }
         });
     }
@@ -192,22 +210,23 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
     }
 
     //retrofit http (direction)
-    public void send_direction_command(String direction) {
-//        Direction dir = new Direction(mCameraId, direction);
-//
-//        Call<List<direction_message>> call = service.get_direction_message(dir);
-//
-//        call.enqueue(new Callback<List<direction_message>>() {
-//            @Override
-//            public void onResponse(Call<List<direction_message>> call, Response<List<direction_message>> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<direction_message>> call, Throwable t) {
-//
-//            }
-//        });
+    public void send_direction_command(int direction) {
+        Direction dir = new Direction(mCameraId, direction);
+
+        Call<ResponseModel> call = service.get_direction_message(mCameraId, dir);
+
+        call.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                Log.d(TAG, "direction() called with: call = [" + call + "], response = [" + response + "]");
+                Log.d(TAG, "direction(): " + response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d(TAG, "onFailure() called with: call = [" + call + "], t = [" + t + "]");
+            }
+        });
         //Log.d("SEND", "send_direction_command() returned: " + call.request());
         //Log.d("EXCUTED", "send_direction_command() returned: " + call.isExecuted());
         //Log.d("CANCELED", "send_direction_command() returned: " + call.isCanceled());
@@ -216,20 +235,21 @@ public class selected_camera_play extends Activity { //implements SurfaceHolder.
 
     //retrofit http (mode)
     public void send_mode_command(String mode) {
-//        Mode md = new Mode(mCameraId, mode);
-//
-//        Call<List<mode_message>> call = service.get_mode_message(md);
-//
-//        call.enqueue(new Callback<List<mode_message>>() {
-//            @Override
-//            public void onResponse(Call<List<mode_message>> call, Response<List<mode_message>> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<mode_message>> call, Throwable t) {
-//
-//            }
-//        });
+        Mode md = new Mode(mCameraId, mode);
+
+        Call<ResponseModel> call = service.get_mode_message(mCameraId, md);
+
+        call.enqueue(new Callback<ResponseModel>() {
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                Log.d(TAG, "mode() called with: call = [" + call + "], response = [" + response + "]");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                Log.d(TAG, "onFailure() called with: call = [" + call + "], t = [" + t + "]");
+            }
+        });
     }
-}
+
+    }
